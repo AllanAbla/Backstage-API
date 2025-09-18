@@ -1,0 +1,189 @@
+[
+  {
+    "_id": { "$oid": "68c9b80f7c1ec4b492ecc38e" },
+    "name": "Theatro Municipal de São Paulo",
+    "slug": "theatro-municipal-sp",
+    "address": {
+      "street": "Praça Ramos de Azevedo, s/n",
+      "neighborhood": "Sé",
+      "city": "São Paulo",
+      "state": "SP",
+      "postal_code": "01037-010",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-46.638615, -23.545235] },
+    "contacts": { "website": "https://theatromunicipal.org.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00.000Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "68c9c1117c1ec4b492ecc390" },
+    "name": "Teatro Sérgio Cardoso",
+    "slug": "teatro-sergio-cardoso",
+    "address": {
+      "street": "Rua Rui Barbosa, 153",
+      "neighborhood": "Bela Vista",
+      "city": "São Paulo",
+      "state": "SP",
+      "postal_code": "01326-010",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-46.64499, -23.55663] },
+    "contacts": { "website": "https://amigosdaarte.org.br/teatro-sergio-cardoso/" },
+    "created_at": { "$date": "2025-09-18T00:00:00.000Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "68c9c1117c1ec4b492ecc391" },
+    "name": "Teatro Renault",
+    "slug": "teatro-renault",
+    "address": {
+      "street": "Av. Brigadeiro Luís Antônio, 411",
+      "neighborhood": "Bela Vista",
+      "city": "São Paulo",
+      "state": "SP",
+      "postal_code": "01317-000",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-46.63822, -23.55422] },
+    "contacts": { "website": "https://www.ticketsforfun.com.br/casas/teatro-renault" },
+    "created_at": { "$date": "2025-09-18T00:00:00.000Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "68c9c1117c1ec4b492ecc392" },
+    "name": "Teatro Bradesco",
+    "slug": "teatro-bradesco-sp",
+    "address": {
+      "street": "Rua Palestra Itália, 500 (Bourbon Shopping)",
+      "neighborhood": "Perdizes",
+      "city": "São Paulo",
+      "state": "SP",
+      "postal_code": "05005-900",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-46.68101, -23.52657] },
+    "contacts": { "website": "https://teatrobradesco.com.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00.000Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "68c9c1117c1ec4b492ecc393" },
+    "name": "Teatro Santander",
+    "slug": "teatro-santander",
+    "address": {
+      "street": "Av. Pres. Juscelino Kubitschek, 2041 (JK Iguatemi)",
+      "neighborhood": "Itaim Bibi / Vila Olímpia",
+      "city": "São Paulo",
+      "state": "SP",
+      "postal_code": "04543-011",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-46.68977, -23.59136] },
+    "contacts": { "website": "https://www.teatrosantander.com.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00.000Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "68c9c1117c1ec4b492ecc394" },
+    "name": "Teatro Alfa",
+    "slug": "teatro-alfa",
+    "address": {
+      "street": "Rua Bento Branco de Andrade Filho, 722",
+      "neighborhood": "Santo Amaro",
+      "city": "São Paulo",
+      "state": "SP",
+      "postal_code": "04757-000",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-46.72083, -23.65111] },
+    "contacts": { "website": "https://www.teatroalfa.com.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00.000Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "68c9c1117c1ec4b492ecc395" },
+    "name": "Teatro Gazeta",
+    "slug": "teatro-gazeta",
+    "address": {
+      "street": "Av. Paulista, 900",
+      "neighborhood": "Bela Vista",
+      "city": "São Paulo",
+      "state": "SP",
+      "postal_code": "01310-940",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-46.65136, -23.56527] },
+    "contacts": { "website": "https://www.teatrogazeta.com.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00.000Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "68c9c1117c1ec4b492ecc396" },
+    "name": "Teatro Raul Cortez",
+    "slug": "teatro-raul-cortez",
+    "address": {
+      "street": "Rua Dr. Plínio Barreto, 285",
+      "neighborhood": "Bela Vista",
+      "city": "São Paulo",
+      "state": "SP",
+      "postal_code": "01313-020",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-46.65228, -23.55802] },
+    "contacts": { "website": "https://www.fecomercio.com.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00.000Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "68c9c1117c1ec4b492ecc397" },
+    "name": "Teatro Porto",
+    "slug": "teatro-porto-seguro",
+    "address": {
+      "street": "Alameda Barão de Piracicaba, 740",
+      "neighborhood": "Campos Elíseos",
+      "city": "São Paulo",
+      "state": "SP",
+      "postal_code": "01216-012",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-46.645291, -23.530277] },
+    "contacts": { "website": "https://www.teatroportoseguro.com.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00.000Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "68c9c1117c1ec4b492ecc398" },
+    "name": "Teatro Procópio Ferreira",
+    "slug": "teatro-procopio-ferreira",
+    "address": {
+      "street": "Rua Augusta, 2823",
+      "neighborhood": "Cerqueira César",
+      "city": "São Paulo",
+      "state": "SP",
+      "postal_code": "01413-100",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-46.66761, -23.56535] },
+    "contacts": { "website": "https://site.bileto.sympla.com.br/teatroprocopioferreira/" },
+    "created_at": { "$date": "2025-09-18T00:00:00.000Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "68c9c1117c1ec4b492ecc399" },
+    "name": "Teatro Frei Caneca (Teatro Sabesp / Opus)",
+    "slug": "teatro-frei-caneca",
+    "address": {
+      "street": "Rua Frei Caneca, 569 (Shopping Frei Caneca)",
+      "neighborhood": "Consolação",
+      "city": "São Paulo",
+      "state": "SP",
+      "postal_code": "01307-001",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-46.65249, -23.55407] },
+    "contacts": { "website": "https://teatroopus.com.br/teatros/teatro-frei-caneca" },
+    "created_at": { "$date": "2025-09-18T00:00:00.000Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00.000Z" }
+  }
+]

@@ -1,0 +1,23 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: theaters-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: theaters-api
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017
+      - MONGODB_DB=theatersdb
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongo
+volumes:
+  mongo_data:
