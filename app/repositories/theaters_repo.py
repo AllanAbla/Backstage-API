@@ -1,99 +1,110 @@
-from typing import Any, Dict, List, Optional
-from bson import ObjectId
+from __future__ import annotations
+
 from datetime import datetime
-from app.db.mongo import get_collection
-from app.schemas.theaters import TheaterIn, TheaterUpdate
+from typing import Any, Dict, List, Optional, Union
 
-def _to_out(doc: Dict[str, Any]) -> Dict[str, Any]:
-    if not doc:
-        return doc
-    return {
-        "id": str(doc.get("_id")),
-        "name": doc.get("name"),
-        "slug": doc.get("slug"),
-        "address": doc.get("address"),
-        "location": doc.get("location"),
-        "contacts": doc.get("contacts"),
-        "created_at": doc.get("created_at"),
-        "updated_at": doc.get("updated_at"),
-    }
+from bson import ObjectId
+from pymongo import ReturnDocument
 
-class TheatersRepository:
-    @property
-    def col(self):
-        return get_collection("theaters")
 
-    async def ensure_indexes(self):
-        await self.col.create_index("slug", unique=True)
-        await self.col.create_index([("location", "2dsphere")])
+class TheatersRepo:
+    def __init__(self, db):
+        self.db = db
+        self.col = db["theaters"]
 
-    async def list(
-        self,
-        q: Optional[str],
-        city: Optional[str],
-        state: Optional[str],
-        neighborhood: Optional[str],
-        slug: Optional[str],
-        near_lat: Optional[float],
-        near_lng: Optional[float],
-        max_distance_m: int,
-        skip: int,
-        limit: int,
-    ) -> List[Dict[str, Any]]:
-        filt: Dict[str, Any] = {}
-        if q:
-            filt["name"] = {"$regex": q, "$options": "i"}
-        if city:
-            filt["address.city"] = city
-        if state:
-            filt["address.state"] = state
-        if neighborhood:
-            filt["address.neighborhood"] = neighborhood
-        if slug:
-            filt["slug"] = slug
-        if near_lat is not None and near_lng is not None:
-            filt["location"] = {
-                "$near": {
-                    "$geometry": {"type": "Point", "coordinates": [near_lng, near_lat]},
-                    "$maxDistance": max_distance_m,
-                }
-            }
-        cursor = self.col.find(filt).skip(skip).limit(min(limit, 200)).sort("name", 1)
-        return [_to_out(doc) async for doc in cursor]
+    # -------- helpers --------
 
-    async def get(self, id_or_slug: str) -> Dict[str, Any] | None:
-        doc = None
-        if ObjectId.is_valid(id_or_slug):
-            doc = await self.col.find_one({"_id": ObjectId(id_or_slug)})
+    def _ensure_object_id(self, id_str: Union[str, ObjectId]) -> ObjectId:
+        if isinstance(id_str, ObjectId):
+            return id_str
+        return ObjectId(str(id_str))
+
+    def _to_public(self, doc: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+        """
+        Converte o documento do Mongo em um dicionário serializável:
+        - _id (ObjectId) -> id (str)
+        - remove campos que não podem ser serializados
+        """
         if not doc:
-            doc = await self.col.find_one({"slug": id_or_slug})
-        return _to_out(doc) if doc else None
+            return None
+        d = dict(doc)
+        _id = d.pop("_id", None)
+        if isinstance(_id, ObjectId):
+            d["id"] = str(_id)
+        elif _id is not None:
+            d["id"] = str(_id)
 
-    async def create(self, payload: TheaterIn) -> Dict[str, Any]:
+        # Se por acaso houver ObjectId em outros campos, converta aqui (raro neste schema)
+        # Exemplo:
+        # if isinstance(d.get("owner_id"), ObjectId):
+        #     d["owner_id"] = str(d["owner_id"])
+
+        return d
+
+    def _sanitize_updatable_fields(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        clean = dict(data or {})
+        clean.pop("_id", None)
+        clean.pop("id", None)
+        contacts = clean.get("contacts")
+        if isinstance(contacts, dict):
+            website = contacts.get("website")
+            if website is not None and not isinstance(website, str):
+                contacts["website"] = str(website)
+            clean["contacts"] = contacts
+        return clean
+
+    async def _maybe_await(self, maybe_coro):
+        try:
+            return await maybe_coro  # Motor
+        except TypeError:
+            return maybe_coro        # PyMongo
+
+    # -------- CRUD --------
+
+    async def list(self, limit: int = 100, skip: int = 0) -> List[Dict[str, Any]]:
+        cursor = self.col.find({}).skip(skip).limit(limit)
+
+        items: List[Dict[str, Any]] = []
+        try:
+            async for doc in cursor:  # Motor
+                items.append(self._to_public(doc))
+        except TypeError:
+            for doc in cursor:        # PyMongo
+                items.append(self._to_public(doc))
+        return items
+
+    async def get(self, id: Union[str, ObjectId]) -> Optional[Dict[str, Any]]:
+        oid = self._ensure_object_id(id)
+        doc = await self._maybe_await(self.col.find_one({"_id": oid}))
+        return self._to_public(doc)
+
+    async def create(self, data: Dict[str, Any]) -> Dict[str, Any]:
         now = datetime.utcnow()
-        doc = payload.model_dump()
-        doc["created_at"] = now
-        doc["updated_at"] = now
-        res = await self.col.insert_one(doc)
-        inserted = await self.col.find_one({"_id": res.inserted_id})
-        return _to_out(inserted)
+        payload = dict(data or {})
+        payload.pop("_id", None)
+        payload.pop("id", None)
+        payload["created_at"] = now
+        payload["updated_at"] = now
 
-    async def update(self, id: str, payload: TheaterUpdate) -> Dict[str, Any] | None:
-        if not ObjectId.is_valid(id):
-            raise ValueError("id inválido")
-        updates = {k: v for k, v in payload.model_dump(exclude_none=True).items()}
-        if not updates:
-            raise ValueError("nada para atualizar")
-        updates["updated_at"] = datetime.utcnow()
-        doc = await self.col.find_one_and_update(
-            {"_id": ObjectId(id)},
-            {"$set": updates},
-            return_document=True,
+        result = await self._maybe_await(self.col.insert_one(payload))
+        inserted_id = getattr(result, "inserted_id", None)
+        return await self.get(inserted_id)
+
+    async def update(self, id: Union[str, ObjectId], data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        oid = self._ensure_object_id(id)
+        clean = self._sanitize_updatable_fields(data)
+        update_doc = {"$set": {**clean, "updated_at": datetime.utcnow()}}
+
+        doc = await self._maybe_await(
+            self.col.find_one_and_update(
+                {"_id": oid},
+                update_doc,
+                return_document=ReturnDocument.AFTER,
+            )
         )
-        return _to_out(doc) if doc else None
+        return self._to_public(doc)
 
-    async def delete(self, id: str) -> bool:
-        if not ObjectId.is_valid(id):
-            raise ValueError("id inválido")
-        res = await self.col.delete_one({"_id": ObjectId(id)})
-        return res.deleted_count > 0
+    async def delete(self, id: Union[str, ObjectId]) -> bool:
+        oid = self._ensure_object_id(id)
+        result = await self._maybe_await(self.col.delete_one({"_id": oid}))
+        return bool(getattr(result, "deleted_count", 0))

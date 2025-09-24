@@ -1,5 +1,5 @@
 # theaters
-from .theaters import TheaterIn, TheaterOut, TheaterUpdate
+from .theaters import TheaterCreate, TheaterIn, TheaterUpdate, TheaterOut
 from .common import Address, GeoPoint, Contacts
 # performances
 from .performances import PerformanceIn, PerformanceOut, PerformanceUpdate
