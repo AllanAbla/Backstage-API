@@ -29,7 +29,9 @@
       "country": "BR"
     },
     "location": { "type": "Point", "coordinates": [-46.64499, -23.55663] },
-    "contacts": { "website": "https://amigosdaarte.org.br/teatro-sergio-cardoso/" },
+    "contacts": {
+      "website": "https://amigosdaarte.org.br/teatro-sergio-cardoso/"
+    },
     "created_at": { "$date": "2025-09-18T00:00:00.000Z" },
     "updated_at": { "$date": "2025-09-18T00:00:00.000Z" }
   },
@@ -46,7 +48,9 @@
       "country": "BR"
     },
     "location": { "type": "Point", "coordinates": [-46.63822, -23.55422] },
-    "contacts": { "website": "https://www.ticketsforfun.com.br/casas/teatro-renault" },
+    "contacts": {
+      "website": "https://www.ticketsforfun.com.br/casas/teatro-renault"
+    },
     "created_at": { "$date": "2025-09-18T00:00:00.000Z" },
     "updated_at": { "$date": "2025-09-18T00:00:00.000Z" }
   },
@@ -165,7 +169,9 @@
       "country": "BR"
     },
     "location": { "type": "Point", "coordinates": [-46.66761, -23.56535] },
-    "contacts": { "website": "https://site.bileto.sympla.com.br/teatroprocopioferreira/" },
+    "contacts": {
+      "website": "https://site.bileto.sympla.com.br/teatroprocopioferreira/"
+    },
     "created_at": { "$date": "2025-09-18T00:00:00.000Z" },
     "updated_at": { "$date": "2025-09-18T00:00:00.000Z" }
   },
@@ -182,8 +188,698 @@
       "country": "BR"
     },
     "location": { "type": "Point", "coordinates": [-46.65249, -23.55407] },
-    "contacts": { "website": "https://teatroopus.com.br/teatros/teatro-frei-caneca" },
+    "contacts": {
+      "website": "https://teatroopus.com.br/teatros/teatro-frei-caneca"
+    },
     "created_at": { "$date": "2025-09-18T00:00:00.000Z" },
     "updated_at": { "$date": "2025-09-18T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "68d001001111111111111001" },
+    "name": "Theatro Municipal do Rio de Janeiro",
+    "slug": "theatro-municipal-rj",
+    "address": {
+      "street": "Praça Floriano, S/N - Centro",
+      "neighborhood": "Centro",
+      "city": "Rio de Janeiro",
+      "state": "RJ",
+      "postal_code": "20031-050",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-43.1764, -22.9083] },
+    "contacts": { "website": "https://theatromunicipal.rj.gov.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d001001111111111111002" },
+    "name": "Teatro Oi Casa Grande",
+    "slug": "teatro-oi-casa-grande",
+    "address": {
+      "street": "Av. Afrânio de Melo Franco, 290 - Leblon",
+      "neighborhood": "Leblon",
+      "city": "Rio de Janeiro",
+      "state": "RJ",
+      "postal_code": "22430-060",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-43.223, -22.982] },
+    "contacts": { "website": "https://www.teatrooicasagrande.com.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d001001111111111111003" },
+    "name": "Teatro Riachuelo Rio",
+    "slug": "teatro-riachuelo-rio",
+    "address": {
+      "street": "Rua do Passeio, 40 - Centro",
+      "neighborhood": "Centro",
+      "city": "Rio de Janeiro",
+      "state": "RJ",
+      "postal_code": "20021-290",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-43.179, -22.91] },
+    "contacts": { "website": "https://teatroriachuelorio.com.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d001001111111111111004" },
+    "name": "Teatro Bradesco Rio",
+    "slug": "teatro-bradesco-rio",
+    "address": {
+      "street": "Av. das Américas, 3900 - Barra da Tijuca",
+      "neighborhood": "Barra da Tijuca",
+      "city": "Rio de Janeiro",
+      "state": "RJ",
+      "postal_code": "22640-102",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-43.354, -23.001] },
+    "contacts": { "website": "https://teatrobradesco.com.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d001001111111111111005" },
+    "name": "Teatro dos Quatro",
+    "slug": "teatro-dos-quatro",
+    "address": {
+      "street": "Rua Marquês de São Vicente, 52 - Gávea",
+      "neighborhood": "Gávea",
+      "city": "Rio de Janeiro",
+      "state": "RJ",
+      "postal_code": "22451-040",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-43.23, -22.975] },
+    "contacts": { "website": "https://teatrodosquatro.com.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d001001111111111111006" },
+    "name": "Teatro Net Rio",
+    "slug": "teatro-net-rio",
+    "address": {
+      "street": "Rua Siqueira Campos, 143 - Copacabana",
+      "neighborhood": "Copacabana",
+      "city": "Rio de Janeiro",
+      "state": "RJ",
+      "postal_code": "22031-070",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-43.187, -22.967] },
+    "contacts": { "website": "https://teatroopusrio.com.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d001001111111111111007" },
+    "name": "Teatro Clara Nunes",
+    "slug": "teatro-clara-nunes",
+    "address": {
+      "street": "Rua Marquês de São Vicente, 52 - Gávea",
+      "neighborhood": "Gávea",
+      "city": "Rio de Janeiro",
+      "state": "RJ",
+      "postal_code": "22451-040",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-43.23, -22.974] },
+    "contacts": {
+      "website": "https://shoppingdagavea.com.br/teatro-clara-nunes"
+    },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d001001111111111111008" },
+    "name": "Teatro Cesgranrio",
+    "slug": "teatro-cesgranrio",
+    "address": {
+      "street": "Rua Santa Alexandrina, 1011 - Rio Comprido",
+      "neighborhood": "Rio Comprido",
+      "city": "Rio de Janeiro",
+      "state": "RJ",
+      "postal_code": "20261-232",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-43.209, -22.929] },
+    "contacts": { "website": "https://teatro.cesgranrio.org.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d001001111111111111009" },
+    "name": "Teatro Solar de Botafogo",
+    "slug": "teatro-solar-botafogo",
+    "address": {
+      "street": "Rua General Polidoro, 180 - Botafogo",
+      "neighborhood": "Botafogo",
+      "city": "Rio de Janeiro",
+      "state": "RJ",
+      "postal_code": "22280-003",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-43.186, -22.951] },
+    "contacts": { "website": "https://solardebotafogo.com.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d001001111111111111010" },
+    "name": "Teatro Fashion Mall",
+    "slug": "teatro-fashion-mall",
+    "address": {
+      "street": "Estrada da Gávea, 899 - São Conrado",
+      "neighborhood": "São Conrado",
+      "city": "Rio de Janeiro",
+      "state": "RJ",
+      "postal_code": "22610-001",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-43.264, -22.997] },
+    "contacts": { "website": "https://teatrofashionmall.com.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d002001111111111111001" },
+    "name": "Teatro Castro Alves",
+    "slug": "teatro-castro-alves",
+    "address": {
+      "street": "Praça Dois de Julho, s/n - Campo Grande",
+      "neighborhood": "Campo Grande",
+      "city": "Salvador",
+      "state": "BA",
+      "postal_code": "40080-121",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-38.5107, -12.9893] },
+    "contacts": { "website": "https://www.tca.ba.gov.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d002001111111111111002" },
+    "name": "Teatro Vila Velha",
+    "slug": "teatro-vila-velha",
+    "address": {
+      "street": "Avenida Sete de Setembro, s/n - Passeio Público",
+      "neighborhood": "Campo Grande",
+      "city": "Salvador",
+      "state": "BA",
+      "postal_code": "40080-121",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-38.512, -12.988] },
+    "contacts": { "website": "https://www.teatrovilavelha.com.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d002001111111111111003" },
+    "name": "Teatro Jorge Amado",
+    "slug": "teatro-jorge-amado",
+    "address": {
+      "street": "Av. Manoel Dias da Silva, 2177 - Pituba",
+      "neighborhood": "Pituba",
+      "city": "Salvador",
+      "state": "BA",
+      "postal_code": "41830-001",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-38.458, -12.999] },
+    "contacts": { "website": "https://www.teatrojorgeamado.com.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d002001111111111111004" },
+    "name": "Teatro Eva Herz Salvador",
+    "slug": "teatro-eva-herz-salvador",
+    "address": {
+      "street": "Av. Tancredo Neves, 2915 - Caminho das Árvores",
+      "neighborhood": "Caminho das Árvores",
+      "city": "Salvador",
+      "state": "BA",
+      "postal_code": "41820-021",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-38.4545, -12.9799] },
+    "contacts": {
+      "website": "https://www.livrariacultura.com.br/teatro-eva-herz"
+    },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d002001111111111111005" },
+    "name": "Teatro Módulo",
+    "slug": "teatro-modulo",
+    "address": {
+      "street": "Av. Magalhães Neto, 1177 - Pituba",
+      "neighborhood": "Pituba",
+      "city": "Salvador",
+      "state": "BA",
+      "postal_code": "41810-012",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-38.453, -12.997] },
+    "contacts": { "website": "https://www.teatromodulo.com.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d002001111111111111006" },
+    "name": "Teatro ISBA",
+    "slug": "teatro-isba",
+    "address": {
+      "street": "Av. Oceânica, 2717 - Ondina",
+      "neighborhood": "Ondina",
+      "city": "Salvador",
+      "state": "BA",
+      "postal_code": "40170-010",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-38.508, -13.005] },
+    "contacts": { "website": "https://www.teatroisba.com.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d002001111111111111007" },
+    "name": "Cine Teatro Solar Boa Vista",
+    "slug": "cine-teatro-solar-boa-vista",
+    "address": {
+      "street": "Rua Monte Serrat, 32 - Engenho Velho de Brotas",
+      "neighborhood": "Engenho Velho de Brotas",
+      "city": "Salvador",
+      "state": "BA",
+      "postal_code": "40285-440",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-38.485, -12.998] },
+    "contacts": { "website": "https://www.solardaboavista.ba.gov.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d002001111111111111008" },
+    "name": "Teatro SESC Casa do Comércio",
+    "slug": "teatro-sesc-casa-comercio",
+    "address": {
+      "street": "Av. Tancredo Neves, 1109 - Caminho das Árvores",
+      "neighborhood": "Caminho das Árvores",
+      "city": "Salvador",
+      "state": "BA",
+      "postal_code": "41820-021",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-38.454, -12.979] },
+    "contacts": { "website": "https://www.sescbahia.com.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d002001111111111111009" },
+    "name": "Teatro Gregório de Mattos",
+    "slug": "teatro-gregorio-de-mattos",
+    "address": {
+      "street": "Praça Castro Alves, s/n - Centro",
+      "neighborhood": "Centro",
+      "city": "Salvador",
+      "state": "BA",
+      "postal_code": "40020-160",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-38.51, -12.972] },
+    "contacts": {
+      "website": "https://teatrogregoriodemattos.salvador.ba.gov.br"
+    },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d002001111111111111010" },
+    "name": "Teatro Martim Gonçalves",
+    "slug": "teatro-martim-goncalves",
+    "address": {
+      "street": "Av. Araújo Pinho, 292 - Canela",
+      "neighborhood": "Canela",
+      "city": "Salvador",
+      "state": "BA",
+      "postal_code": "40110-150",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-38.51, -12.986] },
+    "contacts": { "website": "https://www.escoladeteatro.ufba.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d003001111111111111001" },
+    "name": "Teatro Ademir Rosa (CIC)",
+    "slug": "teatro-ademir-rosa-cic",
+    "address": {
+      "street": "Av. Gov. Irineu Bornhausen, 5600 - Agronômica",
+      "neighborhood": "Agronômica",
+      "city": "Florianópolis",
+      "state": "SC",
+      "postal_code": "88025-200",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-48.534, -27.593] },
+    "contacts": { "website": "https://www.cultura.sc.gov.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d003001111111111111002" },
+    "name": "Teatro Álvaro de Carvalho",
+    "slug": "teatro-alvaro-de-carvalho",
+    "address": {
+      "street": "Rua Marechal Guilherme, 26 - Centro",
+      "neighborhood": "Centro",
+      "city": "Florianópolis",
+      "state": "SC",
+      "postal_code": "88015-110",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-48.548, -27.596] },
+    "contacts": { "website": "https://www.teatroalvarodecarvalho.sc.gov.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d003001111111111111003" },
+    "name": "Teatro Pedro Ivo Campos",
+    "slug": "teatro-pedro-ivo-campos",
+    "address": {
+      "street": "Rodovia SC-401, Km 5 - Saco Grande",
+      "neighborhood": "Saco Grande",
+      "city": "Florianópolis",
+      "state": "SC",
+      "postal_code": "88032-005",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-48.519, -27.56] },
+    "contacts": { "website": "https://www.teatropedroivo.sc.gov.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d003001111111111111004" },
+    "name": "Teatro Governador Pedro Ivo",
+    "slug": "teatro-governador-pedro-ivo",
+    "address": {
+      "street": "Rod. SC-401, Km 5 - João Paulo",
+      "neighborhood": "João Paulo",
+      "city": "Florianópolis",
+      "state": "SC",
+      "postal_code": "88032-005",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-48.52, -27.562] },
+    "contacts": { "website": "https://www.teatropedroivo.sc.gov.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d003001111111111111005" },
+    "name": "Teatro Carlos Gomes",
+    "slug": "teatro-carlos-gomes",
+    "address": {
+      "street": "Rua XV de Novembro, 1181 - Centro",
+      "neighborhood": "Centro",
+      "city": "Blumenau",
+      "state": "SC",
+      "postal_code": "89010-001",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-49.066, -26.92] },
+    "contacts": { "website": "https://www.teatrocarlosgomes.com.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d003001111111111111006" },
+    "name": "Teatro Municipal de Itajaí",
+    "slug": "teatro-municipal-itajai",
+    "address": {
+      "street": "Rua Gregório Chaves, 110 - Fazenda",
+      "neighborhood": "Fazenda",
+      "city": "Itajaí",
+      "state": "SC",
+      "postal_code": "88301-410",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-48.664, -26.907] },
+    "contacts": { "website": "https://www.itajai.sc.gov.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d003001111111111111007" },
+    "name": "Teatro Municipal de Chapecó",
+    "slug": "teatro-municipal-chapeco",
+    "address": {
+      "street": "Av. Nereu Ramos, 729E - Centro",
+      "neighborhood": "Centro",
+      "city": "Chapecó",
+      "state": "SC",
+      "postal_code": "89801-021",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-52.615, -27.1] },
+    "contacts": { "website": "https://www.chapeco.sc.gov.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d003001111111111111008" },
+    "name": "Teatro Marajoara",
+    "slug": "teatro-marajoara",
+    "address": {
+      "street": "Rua Getúlio Vargas, 227 - Centro",
+      "neighborhood": "Centro",
+      "city": "Lages",
+      "state": "SC",
+      "postal_code": "88502-100",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-50.322, -27.815] },
+    "contacts": { "website": "https://www.lages.sc.gov.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d003001111111111111009" },
+    "name": "Teatro da UBRO",
+    "slug": "teatro-ubro",
+    "address": {
+      "street": "Praça XV de Novembro, 344 - Centro",
+      "neighborhood": "Centro",
+      "city": "Florianópolis",
+      "state": "SC",
+      "postal_code": "88010-400",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-48.547, -27.597] },
+    "contacts": { "website": "https://www.pmf.sc.gov.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d003001111111111111010" },
+    "name": "Teatro Juarez Machado",
+    "slug": "teatro-juarez-machado",
+    "address": {
+      "street": "Rua XV de Novembro, 1383 - América",
+      "neighborhood": "América",
+      "city": "Joinville",
+      "state": "SC",
+      "postal_code": "89204-100",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-48.846, -26.303] },
+    "contacts": { "website": "https://www.teatrojuarezmachado.com.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d004001111111111111001" },
+    "name": "Teatro Santa Isabel",
+    "slug": "teatro-santa-isabel",
+    "address": {
+      "street": "Praça da República, s/n - Santo Antônio",
+      "neighborhood": "Santo Antônio",
+      "city": "Recife",
+      "state": "PE",
+      "postal_code": "50010-040",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-34.877, -8.062] },
+    "contacts": { "website": "https://teatrosantaisabel.com.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d004001111111111111002" },
+    "name": "Teatro Guaira",
+    "slug": "teatro-guaira",
+    "address": {
+      "street": "Rua XV de Novembro, 971 - Centro",
+      "neighborhood": "Centro",
+      "city": "Curitiba",
+      "state": "PR",
+      "postal_code": "80060-000",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-49.271, -25.427] },
+    "contacts": { "website": "https://www.teatroguaira.pr.gov.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d004001111111111111003" },
+    "name": "Palácio das Artes",
+    "slug": "palacio-das-artes",
+    "address": {
+      "street": "Av. Afonso Pena, 1537 - Centro",
+      "neighborhood": "Centro",
+      "city": "Belo Horizonte",
+      "state": "MG",
+      "postal_code": "30130-004",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-43.939, -19.924] },
+    "contacts": { "website": "https://www.palaciodasartes.com.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d004001111111111111004" },
+    "name": "Theatro São Pedro",
+    "slug": "theatro-sao-pedro-rs",
+    "address": {
+      "street": "Praça Marechal Deodoro, s/n - Centro Histórico",
+      "neighborhood": "Centro Histórico",
+      "city": "Porto Alegre",
+      "state": "RS",
+      "postal_code": "90010-300",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-51.229, -30.028] },
+    "contacts": { "website": "https://www.theatrosaopedro.rs.gov.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d004001111111111111005" },
+    "name": "Teatro Nacional Claudio Santoro",
+    "slug": "teatro-nacional-claudio-santoro",
+    "address": {
+      "street": "Setor Cultural Norte, Via N2",
+      "neighborhood": "Asa Norte",
+      "city": "Brasília",
+      "state": "DF",
+      "postal_code": "70070-300",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-47.883, -15.793] },
+    "contacts": { "website": "https://www.cultura.df.gov.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d004001111111111111006" },
+    "name": "Theatro Carlos Gomes",
+    "slug": "theatro-carlos-gomes-es",
+    "address": {
+      "street": "Praça Costa Pereira, S/N - Centro",
+      "neighborhood": "Centro",
+      "city": "Vitória",
+      "state": "ES",
+      "postal_code": "29015-131",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-40.337, -20.319] },
+    "contacts": { "website": "https://theatrocarlosgomes.es.gov.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d004001111111111111007" },
+    "name": "Theatro José de Alencar",
+    "slug": "theatro-jose-de-alencar",
+    "address": {
+      "street": "Rua Liberato Barroso, 525 - Centro",
+      "neighborhood": "Centro",
+      "city": "Fortaleza",
+      "state": "CE",
+      "postal_code": "60030-160",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-38.53, -3.728] },
+    "contacts": {
+      "website": "https://www.theatrojosealencar.secult.ce.gov.br"
+    },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d004001111111111111008" },
+    "name": "Teatro Amazonas",
+    "slug": "teatro-amazonas",
+    "address": {
+      "street": "Largo de São Sebastião, s/n - Centro",
+      "neighborhood": "Centro",
+      "city": "Manaus",
+      "state": "AM",
+      "postal_code": "69025-140",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-60.023, -3.131] },
+    "contacts": { "website": "https://www.teatroamazonas.com.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d004001111111111111009" },
+    "name": "Teatro Goiânia",
+    "slug": "teatro-goiania",
+    "address": {
+      "street": "Av. Tocantins, s/n - Setor Central",
+      "neighborhood": "Setor Central",
+      "city": "Goiânia",
+      "state": "GO",
+      "postal_code": "74005-010",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-49.256, -16.678] },
+    "contacts": { "website": "https://www.teatrogoiania.go.gov.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "68d004001111111111111010" },
+    "name": "Theatro da Paz",
+    "slug": "theatro-da-paz",
+    "address": {
+      "street": "Praça da República, s/n - Centro",
+      "neighborhood": "Centro",
+      "city": "Belém",
+      "state": "PA",
+      "postal_code": "66017-060",
+      "country": "BR"
+    },
+    "location": { "type": "Point", "coordinates": [-48.502, -1.454] },
+    "contacts": { "website": "https://www.theatrodapaz.com.br" },
+    "created_at": { "$date": "2025-09-18T00:00:00Z" },
+    "updated_at": { "$date": "2025-09-18T00:00:00Z" }
   }
 ]
