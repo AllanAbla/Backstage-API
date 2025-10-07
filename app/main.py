@@ -7,6 +7,7 @@ if str(ROOT) not in sys.path:
 from fastapi import FastAPI
 from app.routes.theaters import router as theaters_router
 from app.routes.performances import router as performances_router
+from app.routes.sessions import router as sessions_router 
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Backstage API", version="0.4.0")
@@ -25,6 +26,7 @@ async def health():
 
 app.include_router(theaters_router)
 app.include_router(performances_router)
+app.include_router(sessions_router)
 
 if __name__ == "__main__":
     import uvicorn
