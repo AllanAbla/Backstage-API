@@ -28,10 +28,8 @@ class ManualSession(BaseModel):
 def create_sessions(data: dict):
     mode = data.get("mode")
     theater_id = data.get("theater_id")
-
-    # ✅ Valida o ObjectId do Mongo
-    if not ObjectId.is_valid(theater_id):
-        raise HTTPException(status_code=400, detail="Theater ID inválido (esperado ObjectId).")
+    if not theater_id:
+        raise HTTPException(status_code=400, detail="theater_id é obrigatório")
 
     sessions = []
 

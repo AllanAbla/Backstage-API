@@ -1,110 +1,178 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
-from bson import ObjectId
-from pymongo import ReturnDocument
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.models.theater import Theater
+from app.schemas.theaters import TheaterCreate, TheaterUpdate
+import unicodedata
+import re
+
+def _slugify(value: str) -> str:
+  """
+  Gera um slug simples a partir do nome:
+  - remove acentos
+  - minúsculas
+  - troca espaços por "-"
+  """
+  value = unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode("ascii")
+  value = re.sub(r"[^\w\s-]", "", value).strip().lower()
+  value = re.sub(r"[\s_-]+", "-", value)
+  return value or "theater"
+
+def _to_public(obj: Theater) -> Dict[str, Any]:
+    address = {
+        "street": obj.street or "",
+        "neighborhood": obj.neighborhood,
+        "city": obj.city or "",
+        "state": obj.state or "",
+        "postal_code": obj.postal_code,
+        "country": obj.country or "BR",
+    }
+
+    location = None
+    if obj.lng is not None and obj.lat is not None:
+        location = {"type": "Point", "coordinates": [obj.lng, obj.lat]}
+
+    contacts = None
+    if obj.website or obj.instagram or obj.phone:
+        contacts = {
+            "website": obj.website,
+            "instagram": obj.instagram,
+            "phone": obj.phone,
+        }
+
+    return {
+        "id": obj.id,
+        "name": obj.name,
+        "slug": obj.slug,
+        "address": address,
+        "location": location,
+        "contacts": contacts,
+        "photo_base64": obj.photo_base64,
+    }
 
 class TheatersRepo:
-    def __init__(self, db):
-        self.db = db
-        self.col = db["theaters"]
+    """
+    Repositório usando SQL (SQLAlchemy Async) para a entidade Theater.
+    """
 
-    # -------- helpers --------
-
-    def _ensure_object_id(self, id_str: Union[str, ObjectId]) -> ObjectId:
-        if isinstance(id_str, ObjectId):
-            return id_str
-        return ObjectId(str(id_str))
-
-    def _to_public(self, doc: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
-        """
-        Converte o documento do Mongo em um dicionário serializável:
-        - _id (ObjectId) -> id (str)
-        - remove campos que não podem ser serializados
-        """
-        if not doc:
-            return None
-        d = dict(doc)
-        _id = d.pop("_id", None)
-        if isinstance(_id, ObjectId):
-            d["id"] = str(_id)
-        elif _id is not None:
-            d["id"] = str(_id)
-
-        # Se por acaso houver ObjectId em outros campos, converta aqui (raro neste schema)
-        # Exemplo:
-        # if isinstance(d.get("owner_id"), ObjectId):
-        #     d["owner_id"] = str(d["owner_id"])
-
-        return d
-
-    def _sanitize_updatable_fields(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        clean = dict(data or {})
-        clean.pop("_id", None)
-        clean.pop("id", None)
-        contacts = clean.get("contacts")
-        if isinstance(contacts, dict):
-            website = contacts.get("website")
-            if website is not None and not isinstance(website, str):
-                contacts["website"] = str(website)
-            clean["contacts"] = contacts
-        return clean
-
-    async def _maybe_await(self, maybe_coro):
-        try:
-            return await maybe_coro  # Motor
-        except TypeError:
-            return maybe_coro        # PyMongo
-
-    # -------- CRUD --------
+    def __init__(self, session: AsyncSession):
+        self.session = session
 
     async def list(self, limit: int = 100, skip: int = 0) -> List[Dict[str, Any]]:
-        cursor = self.col.find({}).skip(skip).limit(limit)
+        stmt = (
+            select(Theater)
+            .offset(skip)
+            .limit(limit)
+            .order_by(Theater.name)
+        )
+        result = await self.session.execute(stmt)
+        theaters = result.scalars().all()
+        return [_to_public(t) for t in theaters]
 
-        items: List[Dict[str, Any]] = []
+    async def get(self, id_: int | str) -> Optional[Dict[str, Any]]:
         try:
-            async for doc in cursor:  # Motor
-                items.append(self._to_public(doc))
-        except TypeError:
-            for doc in cursor:        # PyMongo
-                items.append(self._to_public(doc))
-        return items
-
-    async def get(self, id: Union[str, ObjectId]) -> Optional[Dict[str, Any]]:
-        oid = self._ensure_object_id(id)
-        doc = await self._maybe_await(self.col.find_one({"_id": oid}))
-        return self._to_public(doc)
+            pk = int(id_)
+        except (ValueError, TypeError):
+            return None
+        obj = await self.session.get(Theater, pk)
+        return _to_public(obj) if obj else None
 
     async def create(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        now = datetime.utcnow()
-        payload = dict(data or {})
-        payload.pop("_id", None)
-        payload.pop("id", None)
-        payload["created_at"] = now
-        payload["updated_at"] = now
+        name = data["name"]
+        slug = data.get("slug") or _slugify(name)
 
-        result = await self._maybe_await(self.col.insert_one(payload))
-        inserted_id = getattr(result, "inserted_id", None)
-        return await self.get(inserted_id)
+        addr = data.get("address") or {}
+        loc = data.get("location") or None
+        contacts = data.get("contacts") or {}
 
-    async def update(self, id: Union[str, ObjectId], data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        oid = self._ensure_object_id(id)
-        clean = self._sanitize_updatable_fields(data)
-        update_doc = {"$set": {**clean, "updated_at": datetime.utcnow()}}
+        lng = lat = None
+        if loc and isinstance(loc.get("coordinates"), (list, tuple)) and len(loc["coordinates"]) >= 2:
+            lng = float(loc["coordinates"][0])
+            lat = float(loc["coordinates"][1])
 
-        doc = await self._maybe_await(
-            self.col.find_one_and_update(
-                {"_id": oid},
-                update_doc,
-                return_document=ReturnDocument.AFTER,
-            )
+        obj = Theater(
+            name=name,
+            slug=slug,
+            street=addr.get("street"),
+            neighborhood=addr.get("neighborhood"),
+            city=addr.get("city"),
+            state=addr.get("state"),
+            postal_code=addr.get("postal_code"),
+            country=addr.get("country"),
+            lng=lng,
+            lat=lat,
+            website=(contacts.get("website") or None),
+            instagram=(contacts.get("instagram") or None),
+            phone=(contacts.get("phone") or None),
+            photo_base64=data.get("photo_base64"),
         )
-        return self._to_public(doc)
 
-    async def delete(self, id: Union[str, ObjectId]) -> bool:
-        oid = self._ensure_object_id(id)
-        result = await self._maybe_await(self.col.delete_one({"_id": oid}))
-        return bool(getattr(result, "deleted_count", 0))
+        self.session.add(obj)
+        await self.session.commit()
+        await self.session.refresh(obj)
+        return _to_public(obj)
+
+    async def update(self, id_: int | str, data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        try:
+            pk = int(id_)
+        except (ValueError, TypeError):
+            return None
+
+        obj = await self.session.get(Theater, pk)
+        if not obj:
+            return None
+
+        if "name" in data and data["name"] is not None:
+            obj.name = data["name"]
+
+        if "slug" in data:
+            new_slug = data["slug"]
+            if new_slug:
+                obj.slug = new_slug
+            elif obj.name:
+                obj.slug = _slugify(obj.name)
+
+        addr = data.get("address")
+        if addr:
+            obj.street = addr.get("street", obj.street)
+            obj.neighborhood = addr.get("neighborhood", obj.neighborhood)
+            obj.city = addr.get("city", obj.city)
+            obj.state = addr.get("state", obj.state)
+            obj.postal_code = addr.get("postal_code", obj.postal_code)
+            obj.country = addr.get("country", obj.country)
+
+        loc = data.get("location")
+        if loc and isinstance(loc.get("coordinates"), (list, tuple)) and len(loc["coordinates"]) >= 2:
+            obj.lng = float(loc["coordinates"][0])
+            obj.lat = float(loc["coordinates"][1])
+
+        contacts = data.get("contacts")
+        if contacts is not None:
+            obj.website = contacts.get("website", obj.website)
+            obj.instagram = contacts.get("instagram", obj.instagram)
+            obj.phone = contacts.get("phone", obj.phone)
+
+        if "photo_base64" in data:
+            obj.photo_base64 = data["photo_base64"]
+
+        await self.session.commit()
+        await self.session.refresh(obj)
+        return _to_public(obj)
+
+    async def delete(self, id_: int | str) -> bool:
+        try:
+            pk = int(id_)
+        except (ValueError, TypeError):
+            return False
+
+        obj = await self.session.get(Theater, pk)
+        if not obj:
+            return False
+
+        await self.session.delete(obj)
+        await self.session.commit()
+        return True

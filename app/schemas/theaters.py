@@ -1,9 +1,7 @@
-# app/schemas/theaters.py
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 from pydantic import BaseModel, Field, HttpUrl
 
-
-# --------- schemas auxiliares ---------
+# --------- auxiliares ---------
 class Address(BaseModel):
     street: str
     neighborhood: Optional[str] = None
@@ -12,29 +10,26 @@ class Address(BaseModel):
     postal_code: Optional[str] = None
     country: Optional[str] = "BR"
 
-
 class Location(BaseModel):
-    type: str = Field(default="Point")
-    coordinates: list[float]  # [longitude, latitude]
-
+    type: str = Field("Point", pattern="^Point$")
+    # [lng, lat]
+    coordinates: List[float] = Field(..., min_items=2, max_items=2)
 
 class Contacts(BaseModel):
-    phone: Optional[str] = None
-    email: Optional[str] = None
     website: Optional[HttpUrl] = None
+    instagram: Optional[str] = None
+    phone: Optional[str] = None
 
-
-# --------- schemas principais ---------
 class TheaterBase(BaseModel):
     name: str
-    slug: str
+    slug: Optional[str] = None
     address: Address
     location: Optional[Location] = None
     contacts: Optional[Contacts] = None
-
+    photo_base64: Optional[str] = None
 
 class TheaterCreate(TheaterBase):
-    """Schema usado no POST /theaters"""
+    """Schema usado no POST /theaters."""
     pass
 
 class TheaterIn(TheaterCreate):
@@ -42,17 +37,16 @@ class TheaterIn(TheaterCreate):
     pass
 
 class TheaterUpdate(BaseModel):
-    """Schema usado no PATCH /theaters"""
+    """Schema usado no PATCH /theaters."""
     name: Optional[str] = None
     slug: Optional[str] = None
     address: Optional[Address] = None
     location: Optional[Location] = None
     contacts: Optional[Contacts] = None
+    photo_base64: Optional[str] = None
 
-
-# opcional: resposta para GET
 class TheaterOut(TheaterBase):
-    id: str
+    id: int
 
     class Config:
-        from_attributes = True  # para funcionar com ORMs/ODM
+        from_attributes = True
