@@ -1,19 +1,24 @@
 from typing import Any, Dict, List, Optional, Tuple
 from datetime import datetime
-from bson import ObjectId
 from pymongo import ASCENDING, TEXT
+from sqlalchemy import select
 from app.db.mongo import get_collection
+from app.db.sql import AsyncSessionLocal
+from app.models.theater import Theater
 from app.schemas.performances import PerformanceIn, PerformanceUpdate
+
 
 def _to_out(doc: Dict[str, Any]) -> Dict[str, Any]:
     if not doc:
         return doc
+
     sessions = []
     for s in doc.get("sessions", []) or []:
         sessions.append({
-            "theater_id": str(s.get("theater_id")) if s.get("theater_id") else None,
+            "theater_id": s.get("theater_id"),   # agora é int
             "when": s.get("when"),
         })
+
     return {
         "id": str(doc.get("_id")),
         "name": doc.get("name"),
@@ -31,118 +36,102 @@ def _to_out(doc: Dict[str, Any]) -> Dict[str, Any]:
         "updated_at": doc.get("updated_at"),
     }
 
+
 class PerformancesRepository:
     @property
     def col(self):
         return get_collection("performances")
 
-    @property
-    def theaters_col(self):
-        return get_collection("theaters")
+    async def _validate_theaters_sql(self, theater_ids: List[int]) -> List[int]:
+        """
+        Valida IDs de teatro consultando o banco SQL.
+        Retorna lista de IDs inválidos.
+        """
+        if not theater_ids:
+            return []
+
+        async with AsyncSessionLocal() as session:
+            stmt = select(Theater.id).where(Theater.id.in_(theater_ids))
+            result = await session.execute(stmt)
+            found = {row[0] for row in result.all()}
+
+        missing = [tid for tid in theater_ids if tid not in found]
+        return missing
 
     async def ensure_indexes(self):
-        # texto para busca simples; índices por temporada, classificação e sessões
-        await self.col.create_index([("name", TEXT), ("synopsis", TEXT), ("tags", TEXT)])
-        await self.col.create_index([("season", ASCENDING)])
-        await self.col.create_index([("classification", ASCENDING)])
-        await self.col.create_index([("sessions.when", ASCENDING)])
-        await self.col.create_index([("sessions.theater_id", ASCENDING)])
+        # remover índice antigo de texto, se existir
+        indexes = await self.col.index_information()
+        for name, info in indexes.items():
+            if info.get("weights"):  # índice textual
+                await self.col.drop_index(name)
 
-    async def _validate_theaters(self, theater_ids: List[ObjectId]) -> Tuple[bool, List[ObjectId]]:
-        if not theater_ids:
-            return True, []
-        cursor = self.theaters_col.find({"_id": {"$in": theater_ids}}, {"_id": 1})
-        found = {d["_id"] async for d in cursor}
-        missing = [tid for tid in theater_ids if tid not in found]
-        return (len(missing) == 0), missing
+        # agora cria APENAS UM índice textual
+        await self.col.create_index(
+            [
+                ("name", "text"),
+                ("synopsis", "text"),
+                ("tags", "text")
+            ],
+            name="performance_text_search"
+        )
 
-    async def list(
-        self,
-        q: Optional[str],
-        season: Optional[int],
-        classification: Optional[str],
-        theater_id: Optional[str],
-        date_from: Optional[datetime],
-        date_to: Optional[datetime],
-        tags: Optional[List[str]],
-        skip: int,
-        limit: int,
-    ) -> List[Dict[str, Any]]:
-        filt: Dict[str, Any] = {}
-        if q:
-            filt["$text"] = {"$search": q}
-        if season is not None:
-            filt["season"] = season
-        if classification:
-            filt["classification"] = classification
-        if tags:
-            filt["tags"] = {"$all": tags}
-
-        session_and: List[Dict[str, Any]] = []
-        if theater_id:
-            if not ObjectId.is_valid(theater_id):
-                return []
-            session_and.append({"sessions.theater_id": ObjectId(theater_id)})
-        if date_from or date_to:
-            range_q: Dict[str, Any] = {}
-            if date_from:
-                range_q["$gte"] = date_from
-            if date_to:
-                range_q["$lte"] = date_to
-            session_and.append({"sessions.when": range_q})
-        if session_and:
-            filt["$and"] = session_and if len(session_and) > 1 else session_and[0]
-
-        cursor = self.col.find(filt).skip(skip).limit(min(limit, 200)).sort([("season", -1), ("name", 1)])
-        return [_to_out(doc) async for doc in cursor]
-
-    async def get(self, id: str) -> Dict[str, Any] | None:
-        if ObjectId.is_valid(id):
-            doc = await self.col.find_one({"_id": ObjectId(id)})
-        else:
-            doc = None
-        return _to_out(doc) if doc else None
-
-    async def create(self, payload: PerformanceIn) -> Dict[str, Any]:
+    async def create(self, payload: PerformanceIn):
         now = datetime.utcnow()
         data = payload.model_dump()
-        theater_ids = []
-        for s in data.get("sessions", []):
-            s["theater_id"] = ObjectId(str(s["theater_id"]))
-            theater_ids.append(s["theater_id"])
-        ok, missing = await self._validate_theaters(theater_ids)
-        if not ok:
-            raise ValueError(f"theater_id(s) inexistente(s): {[str(m) for m in missing]}")
+
+        # pega IDs de teatro da performance inteira
+        theater_ids = [block.theater_id for block in data.get("theaters", [])]
+
+        missing = await self._validate_theaters_sql(theater_ids)
+        if missing:
+            raise ValueError(f"IDs de teatro inexistentes: {missing}")
+
+        # sessions agora é convertida para:
+        # { when: ..., theater_id: int }
+        sessions = []
+        for block in data.get("theaters", []):
+            for s in block.get("sessions", []):
+                sessions.append({
+                    "when": s["when"],
+                    "theater_id": block["theater_id"],   # int
+                })
+
+        data["sessions"] = sessions
+        data.pop("theaters", None)
+
         data["created_at"] = now
         data["updated_at"] = now
+
         res = await self.col.insert_one(data)
-        inserted = await self.col.find_one({"_id": res.inserted_id})
-        return _to_out(inserted)
+        doc = await self.col.find_one({"_id": res.inserted_id})
+        return _to_out(doc)
 
-    async def update(self, id: str, payload: PerformanceUpdate) -> Dict[str, Any] | None:
-        if not ObjectId.is_valid(id):
-            raise ValueError("id inválido")
-        updates = {k: v for k, v in payload.model_dump(exclude_none=True).items()}
-        if "sessions" in updates and updates["sessions"] is not None:
-            theater_ids = []
-            for s in updates["sessions"]:
-                s["theater_id"] = ObjectId(str(s["theater_id"]))
-                theater_ids.append(s["theater_id"])
-            ok, missing = await self._validate_theaters(theater_ids)
-            if not ok:
-                raise ValueError(f"theater_id(s) inexistente(s): {[str(m) for m in missing]}")
-        if not updates:
-            raise ValueError("nada para atualizar")
+    async def update(self, id: str, payload: PerformanceUpdate):
+        updates = payload.model_dump(exclude_none=True)
+
+        if "theaters" in updates:
+            new_blocks = updates["theaters"]
+            theater_ids = [b.theater_id for b in new_blocks]
+
+            missing = await self._validate_theaters_sql(theater_ids)
+            if missing:
+                raise ValueError(f"IDs de teatro inexistentes: {missing}")
+
+            sessions = []
+            for block in new_blocks:
+                for s in block.sessions:
+                    sessions.append({
+                        "when": s.when,
+                        "theater_id": block.theater_id,
+                    })
+            updates["sessions"] = sessions
+            updates.pop("theaters", None)
+
         updates["updated_at"] = datetime.utcnow()
-        doc = await self.col.find_one_and_update(
-            {"_id": ObjectId(id)},
-            {"$set": updates},
-            return_document=True,
-        )
-        return _to_out(doc) if doc else None
 
-    async def delete(self, id: str) -> bool:
-        if not ObjectId.is_valid(id):
-            raise ValueError("id inválido")
-        res = await self.col.delete_one({"_id": ObjectId(id)})
-        return res.deleted_count > 0
+        doc = await self.col.find_one_and_update(
+            {"_id": id},
+            {"$set": updates},
+            return_document=True
+        )
+        return _to_out(doc)

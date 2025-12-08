@@ -5,7 +5,11 @@ from typing import List, Dict
 import uuid
 from bson import ObjectId
 
-from app.repositories.sessions_repo import save_sessions, get_all_sessions, get_sessions_by_performance
+from app.repositories.sessions_repo import (
+    save_sessions,
+    get_all_sessions,
+    get_sessions_by_performance,
+)
 
 router = APIRouter(prefix="/sessions", tags=["Sessions"])
 
@@ -14,13 +18,13 @@ class SessionRule(BaseModel):
     start_date: str
     end_date: str
     rules: Dict[int, List[str]]
-    theater_id: str
-    performance_id: str | None = None
+    theater_id: int                   
+    performance_id: str | None = None 
 
 
 class ManualSession(BaseModel):
     sessions: List[Dict[str, str]]
-    theater_id: str
+    theater_id: int                 
     performance_id: str | None = None
 
 
@@ -28,18 +32,19 @@ class ManualSession(BaseModel):
 def create_sessions(data: dict):
     mode = data.get("mode")
     theater_id = data.get("theater_id")
-    if not theater_id:
+
+    if theater_id is None:
         raise HTTPException(status_code=400, detail="theater_id é obrigatório")
 
     sessions = []
 
-    # === MODO POR REGRA ===
+    # =============== MODO POR REGRA ===============
     if mode == "rule":
         rule_data = SessionRule(**data)
         start = datetime.fromisoformat(rule_data.start_date)
         end = datetime.fromisoformat(rule_data.end_date)
-        current = start
 
+        current = start
         while current <= end:
             weekday = current.weekday()
             if str(weekday) in map(str, rule_data.rules.keys()):
@@ -51,10 +56,12 @@ def create_sessions(data: dict):
                     sessions.append({
                         "id": str(uuid.uuid4()),
                         "datetime": dt,
-                        "theater_id": ObjectId(rule_data.theater_id),
-                        "performance_id": ObjectId(rule_data.performance_id)
-                        if rule_data.performance_id and ObjectId.is_valid(rule_data.performance_id)
-                        else None,
+                        "theater_id": rule_data.theater_id,
+                        "performance_id": (
+                            ObjectId(rule_data.performance_id)
+                            if rule_data.performance_id and ObjectId.is_valid(rule_data.performance_id)
+                            else None
+                        ),
                         "created_at": datetime.utcnow(),
                         "updated_at": datetime.utcnow(),
                     })
@@ -63,17 +70,20 @@ def create_sessions(data: dict):
         save_sessions(sessions)
         return {"mode": "rule", "count": len(sessions), "sessions": sessions}
 
-    # === MODO MANUAL ===
+    # =============== MODO MANUAL ===============
     elif mode == "manual":
         manual_data = ManualSession(**data)
+
         for s in manual_data.sessions:
             sessions.append({
                 "id": str(uuid.uuid4()),
                 "datetime": datetime.fromisoformat(f"{s['date']}T{s['hour']}:00"),
-                "theater_id": ObjectId(manual_data.theater_id),
-                "performance_id": ObjectId(manual_data.performance_id)
-                if manual_data.performance_id and ObjectId.is_valid(manual_data.performance_id)
-                else None,
+                "theater_id": manual_data.theater_id,  # >>> INT AGORA
+                "performance_id": (
+                    ObjectId(manual_data.performance_id)
+                    if manual_data.performance_id and ObjectId.is_valid(manual_data.performance_id)
+                    else None
+                ),
                 "created_at": datetime.utcnow(),
                 "updated_at": datetime.utcnow(),
             })
