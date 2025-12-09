@@ -1,3 +1,4 @@
+from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
@@ -22,7 +23,7 @@ AsyncSessionLocal = async_sessionmaker(
 
 Base = declarative_base()
 
-async def get_session() -> AsyncSession:
+async def get_session() -> AsyncGenerator[AsyncSession, None]:
     """Dependency do FastAPI para injetar sessão SQL assíncrona."""
     async with AsyncSessionLocal() as session:
         yield session

@@ -4,11 +4,12 @@ from pydantic import BaseModel, Field, HttpUrl
 # --------- auxiliares ---------
 class Address(BaseModel):
     street: str
+    number: str
     neighborhood: Optional[str] = None
     city: str
     state: str
-    postal_code: Optional[str] = None
-    country: Optional[str] = "BR"
+    postal_code: str
+    country: str
 
 class Location(BaseModel):
     type: str = Field("Point", pattern="^Point$")

@@ -10,6 +10,7 @@ class Theater(Base):
     slug = Column(String(255), nullable=False, unique=True, index=True)
 
     street = Column(String(255), nullable=True)
+    number = Column(String(50), nullable=True)
     neighborhood = Column(String(255), nullable=True)
     city = Column(String(100), nullable=True)
     state = Column(String(50), nullable=True)
