@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routes.theaters import router as theaters_router
 from app.routes.performances import router as performances_router
 from app.routes.sessions import router as sessions_router
+from app.routes.utils_address import router as utils_router
 
 from app.db.sql import Base, engine  # SQLAlchemy
 
@@ -38,6 +39,7 @@ async def health():
 app.include_router(theaters_router)
 app.include_router(performances_router)
 app.include_router(sessions_router)
+app.include_router(utils_router)
 
 if __name__ == "__main__":
     import uvicorn

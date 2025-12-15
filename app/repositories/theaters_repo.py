@@ -25,6 +25,7 @@ def _slugify(value: str) -> str:
 def _to_public(obj: Theater) -> Dict[str, Any]:
     address = {
         "street": obj.street or "",
+        "number": obj.number or "",
         "neighborhood": obj.neighborhood,
         "city": obj.city or "",
         "state": obj.state or "",
@@ -98,6 +99,7 @@ class TheatersRepo:
             name=name,
             slug=slug,
             street=addr.get("street"),
+            number=addr.get("number"),
             neighborhood=addr.get("neighborhood"),
             city=addr.get("city"),
             state=addr.get("state"),
@@ -139,6 +141,7 @@ class TheatersRepo:
         addr = data.get("address")
         if addr:
             obj.street = addr.get("street", obj.street)
+            obj.number = addr.get("number", obj.number)
             obj.neighborhood = addr.get("neighborhood", obj.neighborhood)
             obj.city = addr.get("city", obj.city)
             obj.state = addr.get("state", obj.state)
