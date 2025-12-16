@@ -57,4 +57,4 @@ Popule a base com os teatros do arquivo seeds/theaters.json (Extended JSON).
 
 $env:MONGODB_URI="mongodb://localhost:27017"
 $env:MONGODB_DB="theatersdb"
-python .\seeds\seed.py
+python -m seeds.seed
