@@ -128,15 +128,11 @@ class TheatersRepo:
         if not obj:
             return None
 
-        if "name" in data and data["name"] is not None:
-            obj.name = data["name"]
-
-        if "slug" in data:
-            new_slug = data["slug"]
-            if new_slug:
-                obj.slug = new_slug
-            elif obj.name:
-                obj.slug = _slugify(obj.name)
+        if "name" in data and isinstance(data["name"], str):
+            new_name = data["name"].strip()
+            if new_name and new_name != (obj.name or ""):
+                obj.name = new_name
+                obj.slug = _slugify(new_name)
 
         addr = data.get("address")
         if addr:
