@@ -1,104 +1,104 @@
-from typing import Any, Dict, List, Optional, Tuple
-from datetime import datetime
-from pymongo import ASCENDING, TEXT
-from sqlalchemy import select
+"""
+performances_repo.py
+Performances armazenam APENAS metadados.
+Sessões vivem exclusivamente na coleção `sessions` (sessions_repo).
+O campo `banner` virou `banner_url` (path relativo no disco).
+"""
+from datetime import datetime, timezone
+from typing import Any, Dict, List, Optional
+from bson import ObjectId, errors as bson_errors
+
 from app.db.mongo import get_collection
-from app.db.sql import AsyncSessionLocal
-from app.models.theater import Theater
 from app.schemas.performances import PerformanceIn, PerformanceUpdate
 
 
-def _to_out(doc: Dict[str, Any]) -> Dict[str, Any]:
+# ── Serialização ──────────────────────────────────────────────────────────────
+
+def _to_out(doc: Dict[str, Any], session_count: int = 0) -> Dict[str, Any]:
     if not doc:
         return doc
-
-    sessions = []
-    for s in doc.get("sessions", []) or []:
-        sessions.append({
-            "theater_id": s.get("theater_id"),   # agora é int
-            "when": s.get("when"),
-        })
-
     return {
-        "id": str(doc.get("_id")),
-        "name": doc.get("name"),
-        "synopsis": doc.get("synopsis"),
-        "tags": doc.get("tags", []),
-        "classification": doc.get("classification"),
-        "season": doc.get("season"),
-        "dramaturgy": doc.get("dramaturgy", []),
-        "direction": doc.get("direction", []),
-        "cast": doc.get("cast", []),
-        "crew": doc.get("crew", []),
-        "sessions": sessions,
-        "banner": doc.get("banner"),
-        "created_at": doc.get("created_at"),
-        "updated_at": doc.get("updated_at"),
+        "id":            str(doc["_id"]),
+        "name":          doc.get("name"),
+        "synopsis":      doc.get("synopsis"),
+        "tags":          doc.get("tags", []),
+        "classification":doc.get("classification"),
+        "season":        doc.get("season"),
+        "dramaturgy":    doc.get("dramaturgy", []),
+        "direction":     doc.get("direction", []),
+        "cast":          doc.get("cast", []),
+        "crew":          doc.get("crew", []),
+        "banner_url":    doc.get("banner_url"),
+        "session_count": session_count,
+        "created_at":    doc.get("created_at"),
+        "updated_at":    doc.get("updated_at"),
     }
 
 
+def _parse_oid(id: str) -> ObjectId:
+    try:
+        return ObjectId(id)
+    except (bson_errors.InvalidId, TypeError):
+        raise ValueError(f"id inválido: {id!r}")
+
+
+# ── Repositório ───────────────────────────────────────────────────────────────
+
 class PerformancesRepository:
+
     @property
     def col(self):
         return get_collection("performances")
 
-    async def _validate_theaters_sql(self, theater_ids: List[int]) -> List[int]:
-        """
-        Valida IDs de teatro consultando o banco SQL.
-        Retorna lista de IDs inválidos.
-        """
-        if not theater_ids:
-            return []
+    # ── Índices ───────────────────────────────────────────────────────────────
 
-        async with AsyncSessionLocal() as session:
-            stmt = select(Theater.id).where(Theater.id.in_(theater_ids))
-            result = await session.execute(stmt)
-            found = {row[0] for row in result.all()}
+    async def ensure_indexes(self) -> None:
+        existing = await self.col.index_information()
+        # Recria índice de texto apenas se não existir com o nome correto
+        if "performance_text_search" not in existing:
+            # Remove qualquer índice textual antigo
+            for name, info in existing.items():
+                if info.get("weights"):
+                    await self.col.drop_index(name)
+            await self.col.create_index(
+                [("name", "text"), ("synopsis", "text"), ("tags", "text")],
+                name="performance_text_search",
+            )
 
-        missing = [tid for tid in theater_ids if tid not in found]
-        return missing
+    # ── Listagem ──────────────────────────────────────────────────────────────
 
-    async def ensure_indexes(self):
-        # remover índice antigo de texto, se existir
-        indexes = await self.col.index_information()
-        for name, info in indexes.items():
-            if info.get("weights"):  # índice textual
-                await self.col.drop_index(name)
+    async def list(
+        self,
+        q: Optional[str] = None,
+        season: Optional[int] = None,
+        classification: Optional[str] = None,
+        skip: int = 0,
+        limit: int = 50,
+    ) -> List[Dict[str, Any]]:
+        filt: Dict[str, Any] = {}
 
-        # agora cria APENAS UM índice textual
-        await self.col.create_index(
-            [
-                ("name", "text"),
-                ("synopsis", "text"),
-                ("tags", "text")
-            ],
-            name="performance_text_search"
-        )
+        if q:
+            filt["$text"] = {"$search": q}
+        if season:
+            filt["season"] = season
+        if classification:
+            filt["classification"] = classification
 
-    async def create(self, payload: PerformanceIn):
-        now = datetime.utcnow()
+        cursor = self.col.find(filt).sort("name", 1).skip(skip).limit(limit)
+        return [_to_out(doc) async for doc in cursor]
+
+    # ── Busca por ID ──────────────────────────────────────────────────────────
+
+    async def get(self, id: str) -> Optional[Dict[str, Any]]:
+        oid = _parse_oid(id)
+        doc = await self.col.find_one({"_id": oid})
+        return _to_out(doc) if doc else None
+
+    # ── Criação ───────────────────────────────────────────────────────────────
+
+    async def create(self, payload: PerformanceIn) -> Dict[str, Any]:
+        now = datetime.now(timezone.utc)
         data = payload.model_dump()
-
-        # pega IDs de teatro da performance inteira
-        theater_ids = [block.theater_id for block in data.get("theaters", [])]
-
-        missing = await self._validate_theaters_sql(theater_ids)
-        if missing:
-            raise ValueError(f"IDs de teatro inexistentes: {missing}")
-
-        # sessions agora é convertida para:
-        # { when: ..., theater_id: int }
-        sessions = []
-        for block in data.get("theaters", []):
-            for s in block.get("sessions", []):
-                sessions.append({
-                    "when": s["when"],
-                    "theater_id": block["theater_id"],   # int
-                })
-
-        data["sessions"] = sessions
-        data.pop("theaters", None)
-
         data["created_at"] = now
         data["updated_at"] = now
 
@@ -106,32 +106,29 @@ class PerformancesRepository:
         doc = await self.col.find_one({"_id": res.inserted_id})
         return _to_out(doc)
 
-    async def update(self, id: str, payload: PerformanceUpdate):
+    # ── Atualização ───────────────────────────────────────────────────────────
+
+    async def update(self, id: str, payload: PerformanceUpdate) -> Optional[Dict[str, Any]]:
+        oid = _parse_oid(id)
         updates = payload.model_dump(exclude_none=True)
 
-        if "theaters" in updates:
-            new_blocks = updates["theaters"]
-            theater_ids = [b.theater_id for b in new_blocks]
+        if not updates:
+            # Nada para atualizar — retorna o doc atual
+            doc = await self.col.find_one({"_id": oid})
+            return _to_out(doc) if doc else None
 
-            missing = await self._validate_theaters_sql(theater_ids)
-            if missing:
-                raise ValueError(f"IDs de teatro inexistentes: {missing}")
-
-            sessions = []
-            for block in new_blocks:
-                for s in block.sessions:
-                    sessions.append({
-                        "when": s.when,
-                        "theater_id": block.theater_id,
-                    })
-            updates["sessions"] = sessions
-            updates.pop("theaters", None)
-
-        updates["updated_at"] = datetime.utcnow()
+        updates["updated_at"] = datetime.now(timezone.utc)
 
         doc = await self.col.find_one_and_update(
-            {"_id": id},
+            {"_id": oid},
             {"$set": updates},
-            return_document=True
+            return_document=True,
         )
-        return _to_out(doc)
+        return _to_out(doc) if doc else None
+
+    # ── Remoção ───────────────────────────────────────────────────────────────
+
+    async def delete(self, id: str) -> bool:
+        oid = _parse_oid(id)
+        result = await self.col.delete_one({"_id": oid})
+        return result.deleted_count == 1
