@@ -8,6 +8,10 @@ from typing import List
 
 
 class Settings(BaseSettings):
+    # Servidor
+    app_host: str = "127.0.0.1"
+    app_port: int = 8000
+
     # CORS — separe múltiplas origens por vírgula no .env
     # Ex: CORS_ORIGINS="http://localhost:5173,https://backstage.meudominio.com"
     cors_origins: List[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
@@ -19,7 +23,11 @@ class Settings(BaseSettings):
     # SQL (SQLite por padrão para dev local)
     database_url: str = "sqlite+aiosqlite:///./backstage.db"
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",  # ignora variáveis no .env não declaradas no modelo
+    )
 
 
 settings = Settings()

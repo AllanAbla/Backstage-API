@@ -1,8 +1,12 @@
 """
-performances_repo.py
+app/repositories/performances_repo.py
+
 Performances armazenam APENAS metadados.
 Sessões vivem exclusivamente na coleção `sessions` (sessions_repo).
-O campo `banner` virou `banner_url` (path relativo no disco).
+
+Campos adicionados:
+  - duration_minutes: int | None
+  - ticket_links: list[{theater_id, theater_name, url}]
 """
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
@@ -18,20 +22,22 @@ def _to_out(doc: Dict[str, Any], session_count: int = 0) -> Dict[str, Any]:
     if not doc:
         return doc
     return {
-        "id":            str(doc["_id"]),
-        "name":          doc.get("name"),
-        "synopsis":      doc.get("synopsis"),
-        "tags":          doc.get("tags", []),
-        "classification":doc.get("classification"),
-        "season":        doc.get("season"),
-        "dramaturgy":    doc.get("dramaturgy", []),
-        "direction":     doc.get("direction", []),
-        "cast":          doc.get("cast", []),
-        "crew":          doc.get("crew", []),
-        "banner_url":    doc.get("banner_url"),
-        "session_count": session_count,
-        "created_at":    doc.get("created_at"),
-        "updated_at":    doc.get("updated_at"),
+        "id":               str(doc["_id"]),
+        "name":             doc.get("name"),
+        "synopsis":         doc.get("synopsis"),
+        "tags":             doc.get("tags", []),
+        "classification":   doc.get("classification"),
+        "season":           doc.get("season"),
+        "duration_minutes": doc.get("duration_minutes"),      # novo
+        "dramaturgy":       doc.get("dramaturgy", []),
+        "direction":        doc.get("direction", []),
+        "cast":             doc.get("cast", []),
+        "crew":             doc.get("crew", []),
+        "ticket_links":     doc.get("ticket_links", []),      # novo
+        "banner_url":       doc.get("banner_url"),
+        "session_count":    session_count,
+        "created_at":       doc.get("created_at"),
+        "updated_at":       doc.get("updated_at"),
     }
 
 
@@ -54,9 +60,7 @@ class PerformancesRepository:
 
     async def ensure_indexes(self) -> None:
         existing = await self.col.index_information()
-        # Recria índice de texto apenas se não existir com o nome correto
         if "performance_text_search" not in existing:
-            # Remove qualquer índice textual antigo
             for name, info in existing.items():
                 if info.get("weights"):
                     await self.col.drop_index(name)
@@ -113,7 +117,6 @@ class PerformancesRepository:
         updates = payload.model_dump(exclude_none=True)
 
         if not updates:
-            # Nada para atualizar — retorna o doc atual
             doc = await self.col.find_one({"_id": oid})
             return _to_out(doc) if doc else None
 
